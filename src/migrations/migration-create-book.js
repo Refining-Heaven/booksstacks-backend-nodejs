@@ -13,6 +13,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      anotherName: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       author: {
         allowNull: true,
         type: Sequelize.STRING
@@ -42,7 +46,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       coverImage: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.BLOB('long')
       },
       createdAt: {

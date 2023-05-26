@@ -2,8 +2,8 @@ import db from '../models';
 
 const addNewBookService = async (data) => {
 	try {
-    if (!data.name || !data.author || !data.status || ! data.kind ||
-      !data.version || !data.language || !data.intro) {
+    if (!data.name  || !data.uploaderId || !data.status || ! data.kind ||
+      !data.version || !data.language) {
         return {
           errCode: 1,
           errMessage: 'Missing input Params',
@@ -11,6 +11,7 @@ const addNewBookService = async (data) => {
       } else {
         const response = await db.Book.create({
           name: data.name,
+          anotherName: data.anotherName,
           author: data.author,
           intro: data.intro,
           uploaderId: data.uploaderId,
