@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     intro: DataTypes.TEXT('long'),
     uploaderId: DataTypes.INTEGER,
     status: DataTypes.STRING,
-    kindId: DataTypes.INTEGER,
+    kind: DataTypes.INTEGER,
     version: DataTypes.STRING,
     language: DataTypes.STRING,
     coverImage: DataTypes.BLOB('long'),

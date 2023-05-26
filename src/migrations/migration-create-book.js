@@ -29,7 +29,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      kindId: {
+      kind: {
         allowNull: false,
         type: Sequelize.INTEGER
       },

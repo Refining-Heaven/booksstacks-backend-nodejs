@@ -27,7 +27,7 @@ const checkUserEmail = async (userEmail) => {
 	}
 };
 
-const signUpUserService = async (data) => {
+const userSignUpService = async (data) => {
 	try {
 		const check = await checkUserEmail(data.email);
 		if (check === true) {
@@ -109,6 +109,6 @@ const userLoginService = async (email, password) => {
 }
 
 module.exports = {
-  signUpUserService,
+  userSignUpService,
   userLoginService
 }
