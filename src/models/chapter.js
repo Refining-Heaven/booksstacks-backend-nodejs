@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Chapter.init({
     chapterNumber: DataTypes.STRING,
-    title: DataTypes.STRING,
+    chapterTitle: DataTypes.STRING,
     contentHTML: DataTypes.TEXT('long'),
     contentMarkdown: DataTypes.TEXT('long'),
     bookId: DataTypes.INTEGER,
