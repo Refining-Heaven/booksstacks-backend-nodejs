@@ -30,19 +30,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       status: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       kind: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER
       },
       version: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       language: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       coverImage: {

@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Book.belongsTo(models.Allcode, {foreignKey: 'status', targetKey:'keyMap', as: 'statusData'}),
+      Book.belongsTo(models.Allcode, {foreignKey: 'version', targetKey:'keyMap', as: 'versionData'}),
+      Book.belongsTo(models.Allcode, {foreignKey: 'language', targetKey:'keyMap', as: 'languageData'})
+      Book.belongsTo(models.Kind, {foreignKey: 'kind', targetKey:'id', as: 'kindData'})
     }
   }
   Book.init({

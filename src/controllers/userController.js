@@ -6,10 +6,7 @@ const handleUserSignUp = async (req, res) => {
 }
 
 const handleUserLogin = async (req, res) => {
-  const email = req.body.email;
-	const password = req.body.password;
-
-  const message = await userService.userLoginService(email, password)
+  const message = await userService.userLoginService(req.body)
   return res.status(200).json(message)
 }
 

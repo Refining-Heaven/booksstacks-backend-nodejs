@@ -29,73 +29,80 @@ const checkUserEmail = async (userEmail) => {
 
 const userSignUpService = async (data) => {
 	try {
-		const check = await checkUserEmail(data.email);
-		if (check === true) {
-			return {
-				errCode: 1,
-				errMessage: 'Your email is already used',
-			};
-		} else {
-			const hashPasswordFromBycrypt = await hashUserPassword(data.password);
-			await db.User.create({
-        email: data.email,
-				username: data.username,
-				password: hashPasswordFromBycrypt,
-			});
-			return {
-				errCode: 0,
-				errMessage: 'OK',
-			};
-		}
+    if (!data.email || !data.username || !data.password) {
+      return {
+        errCode: 2,
+        errMessage: 'Missing input parameters!',
+      };
+    } else {
+      const checkEmail = await checkUserEmail(data.email);
+      if (checkEmail === true) {
+        return {
+          errCode: 1,
+          errMessage: 'Your email is already in use!',
+        };
+      } else {
+        const hashPasswordFromBycrypt = await hashUserPassword(data.password);
+        await db.User.create({
+          email: data.email,
+          username: data.username,
+          password: hashPasswordFromBycrypt,
+        });
+        return {
+          errCode: 0,
+          errMessage: 'Sign up succeed!',
+        };
+      }
+    }
 	} catch (e) {
 		console.log(e);
     return {
       errCode: -1,
-      errMessage: 'Error from server',
+      errMessage: 'Error from server!',
     };
 	}
 };
 
-const userLoginService = async (email, password) => {
+const userLoginService = async (data) => {
   try {
-    if (!email || !password) {
-      return res.status(500).json({
-        errCode: 1,
-        errMessage: 'Missing inputs parameter',
-      });
+    if (!data.email || !data.password) {
+      return {
+        errCode: 4,
+        errMessage: 'Missing inputs parameters!',
+      };
     } else {
-      const isExist = await checkUserEmail(email);
+      const isExist = await checkUserEmail(data.email);
       if (isExist) {
         const user = await db.User.findOne({
-          where: { email: email },
-          attributes: ['email', 'username' , 'password'],
+          where: { email: data.email },
+          attributes: ['id', 'email', 'username' , 'password'],
           raw: true,
         });
         if (user) {
-          const check = await bcrypt.compareSync(password, user.password);
+          const check = await bcrypt.compareSync(data.password, user.password);
           if (check) {
             delete user.password;
             return {
               errCode: 0,
-              errMessage: 'Ok',
+              errMessage: 'Login succeed!',
               data: user
             }
           } else {
             return {
-              errCode: 4,
-              errMessage: 'Wrong password'
+              errCode: 1,
+              errMessage: 'Wrong password!'
             }
           }
         } else {
           return {
-            errCode: 3,
-            errMessage: 'User not found'
+            errCode: 2,
+            errMessage: 'User not found!'
           }
         }
       } else {
         return {
-          errCode: 2,
-          errMessage: `Your Email isn't exist in our system`
+          errCode: 3,
+          errMessage: `Your Email isn't exist in our system!`
         }
       }
     }
