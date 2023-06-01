@@ -1,4 +1,5 @@
 import db from '../models';
+import book_genre from "../models/book_genre";
 
 const getAllGenreService = async () => {
 	try {
@@ -94,7 +95,7 @@ const getAllBookService = async () => {
 				{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
 			],
 			raw: true,
-			nest: true
+			nest: true,
 		});
 		return {
 			errCode: 0,
@@ -115,7 +116,7 @@ const getBookInfoByIdService = async (bookId) => {
 			const bookInfo = await db.Book.findOne({
 				where: { id: bookId },
 				attributes: {
-					exclude: []
+					exclude: ['createdAt', 'updatedAt'],
 				},
 				include: [
 					{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
@@ -124,8 +125,19 @@ const getBookInfoByIdService = async (bookId) => {
 					{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
 				],
 				raw: true,
-				nest: true
+				nest: true,
 			});
+			const genreData = await db.Book_Genre.findAll({
+				where: { bookId: bookId },
+				attributes: {
+					exclude: ['id', 'bookId', 'createdAt', 'updatedAt'],
+				},
+				include: [
+					{ model: db.Genre, as: 'genreData', attributes: ['valueEn', 'valueVi'] }
+				],
+				raw: true,
+				nest: true,
+			})
 			if (!bookInfo) {
 				return {
 					errCode: 1,
@@ -135,7 +147,7 @@ const getBookInfoByIdService = async (bookId) => {
 				return {
 					errCode: 0,
 					errMessage: 'Ok',
-					data: bookInfo,
+					data: {...bookInfo, genreData},
 				};
 			}
 		} else {
