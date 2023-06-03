@@ -88,6 +88,7 @@ const getAllCodeService = async (type) => {
 const getAllBookService = async () => {
 	try {
 		const allBook = await db.Book.findAll({
+			order: [['updatedAt', 'DESC']],
 			include: [
 				{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
 				{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
