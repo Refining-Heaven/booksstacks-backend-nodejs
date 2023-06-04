@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // Book_Genre.belongsTo(models.Book, {foreignKey: 'bookId', targetKey:'id'})
+      Book_Genre.belongsTo(models.Book, {foreignKey: 'bookId', targetKey:'id', as: 'bookData'})
       Book_Genre.belongsTo(models.Genre, {foreignKey: 'genreId', targetKey:'id', as: 'genreData'})
     }
   }
