@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import db from '../models';
 import book_genre from '../models/book_genre';
 
@@ -143,6 +144,48 @@ const getAllNewBookService = async () => {
 	}
 };
 
+const getAllBookByNameService = async (name) => {
+	try {
+		if (name) {
+			const allBook = await db.Book.findAll({
+				where: {
+					bookName: { [Op.like]: '%' + name + '%' },
+				},
+				limit: 5,
+				order: [['bookName', 'ASC']],
+				attributes: {
+					exclude: [
+						'author',
+						'intro',
+						'uploaderId',
+						'status',
+						'kind',
+						'language',
+						'version',
+						'createdAt',
+						'updatedAt',
+					],
+				},
+			});
+			return {
+				errCode: 0,
+				data: allBook,
+			};
+		} else {
+			return {
+				errCode: 2,
+				errMessage: 'Missing required parameters',
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 const getAllBookByGenreService = async (genreId) => {
 	try {
 		if (genreId) {
@@ -173,15 +216,13 @@ const getAllBookByGenreService = async (genreId) => {
 				attributes: {
 					exclude: ['id', 'bookId', 'createdAt', 'updatedAt'],
 				},
-				include: [
-					{ model: db.Genre, as: 'genreData', attributes: ['valueEn', 'valueVi'] }
-				],
+				include: [{ model: db.Genre, as: 'genreData', attributes: ['valueEn', 'valueVi'] }],
 				raw: true,
 				nest: true,
-			})
+			});
 			return {
 				errCode: 0,
-				data: {allBook, ...genre},
+				data: { allBook, ...genre },
 			};
 		} else {
 			return {
@@ -258,6 +299,7 @@ module.exports = {
 	getAllCodeService,
 	getAllBookService,
 	getAllNewBookService,
+	getAllBookByNameService,
 	getAllBookByGenreService,
 	getBookInfoByIdService,
 };

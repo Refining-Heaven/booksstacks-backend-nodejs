@@ -75,7 +75,7 @@ const userLoginService = async (data) => {
       if (isExist) {
         const user = await db.User.findOne({
           where: { email: data.email },
-          attributes: ['id', 'email', 'username' , 'password'],
+          attributes: ['id', 'email', 'username' , 'password', 'avatar'],
           raw: true,
         });
         if (user) {
