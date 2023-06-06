@@ -119,6 +119,7 @@ const getAllNewBookService = async () => {
 	try {
 		const allBook = await db.Book.findAll({
 			order: [['updatedAt', 'DESC']],
+			limit: 6,
 			attributes: {
 				exclude: ['intro', 'createdAt'],
 			},
