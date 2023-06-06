@@ -50,7 +50,7 @@ const userSignUpService = async (data) => {
         });
         return {
           errCode: 0,
-          errMessage: 'Sign up succeed!',
+          errMessage: 'Sign up succeed, please login!',
         };
       }
     }
