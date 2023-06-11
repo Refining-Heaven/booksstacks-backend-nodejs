@@ -15,6 +15,7 @@ const handleGetAllCode = async (req, res) => {
 	return res.status(200).json(message);
 };
 
+// Book
 const handleGetAllBook = async (req, res) => {
 	const message = await appService.getAllBookService();
 	return res.status(200).json(message);
@@ -32,14 +33,27 @@ const handleGetAllBookByName = async (req, res) => {
 };
 
 const handleGetAllBookByGenre = async (req, res) => {
-	const genreId = req.query.genreId;
+	const genreId = req.query.id;
 	const message = await appService.getAllBookByGenreService(genreId);
 	return res.status(200).json(message);
 };
 
-const handleGetBookInfoById = async (req, res) => {
+const handleGetBookInfo = async (req, res) => {
 	const bookId = req.query.id;
-	const message = await appService.getBookInfoByIdService(bookId);
+	const message = await appService.getBookInfoService(bookId);
+	return res.status(200).json(message);
+};
+
+// Chapter
+const handleGetAllChapter = async (req, res) => {
+	const bookId = req.query.id;
+	const message = await appService.getAllChapterService(bookId);
+	return res.status(200).json(message);
+};
+
+const handleGetChapterInfo = async (req, res) => {
+	const chapterId = req.query.id;
+	const message = await appService.getChapterInfoService(chapterId);
 	return res.status(200).json(message);
 };
 
@@ -51,5 +65,7 @@ module.exports = {
 	handleGetAllNewBook,
 	handleGetAllBookByName,
 	handleGetAllBookByGenre,
-	handleGetBookInfoById,
+	handleGetBookInfo,
+	handleGetAllChapter,
+	handleGetChapterInfo
 };

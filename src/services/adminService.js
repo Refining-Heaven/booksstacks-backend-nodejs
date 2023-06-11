@@ -28,14 +28,14 @@ const addNewBookService = async (data) => {
 
 const updateBookInfoService = async (data) => {
 	try {
-		if (!data.id || !data.uploaderId) {
+		if (!data.bookId || !data.uploaderId) {
 			return {
 				errCode: 1,
 				errMessage: 'Missing input Parameters!',
 			};
 		} else {
 			let book = await db.Book.findOne({
-				where: { id: data.id },
+				where: { id: data.bookId },
 				raw: false,
 			});
 			if (book) {
@@ -57,14 +57,14 @@ const updateBookInfoService = async (data) => {
 				await book.save();
 				const genres = data.arrGenre;
 				const existing = await db.Book_Genre.findAll({
-					where: { bookId: data.id },
+					where: { bookId: data.bookId },
 					attributes: ['bookId', 'genreId'],
 					raw: false,
 				});
 				if (!existing) {
 					await db.Book_Genre.bulkCreate(genres);
 				} else {
-					await db.Book_Genre.destroy({ where: { bookId: data.id } });
+					await db.Book_Genre.destroy({ where: { bookId: data.bookId } });
 					await db.Book_Genre.bulkCreate(genres);
 				}
 				return {
@@ -121,8 +121,84 @@ const deleteBookService = async (bookId) => {
 	}
 };
 
+const addNewChapterService = async (data) => {
+	try {
+		if (!data.bookId) {
+			return {
+				errCode: 2,
+				errMessage: 'No book is selected!',
+			};
+		} else {
+			if (!data.chapterNumber || !data.chapterContent) {
+				return {
+					errCode: 1,
+					errMessage: 'Missing input Parameters!',
+				};
+			} else {
+				const response = await db.Chapter.create({
+					chapterNumber: data.chapterNumber,
+					chapterTitle: data.chapterTitle,
+					chapterContent: data.chapterContent,
+					bookId: data.bookId,
+				});
+				return {
+					errCode: 0,
+					errMessage: 'Add new chapter succeed!',
+				};
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+const updateChapterInfoService = async (data) => {
+	try {
+		if (!data.chapterId) {
+			return {
+				errCode: 1,
+				errMessage: 'Missing input Parameters!',
+			};
+		} else {
+			let chapter = await db.Chapter.findOne({
+				where: { id: data.chapterId },
+				raw: false,
+			});
+			if (chapter) {
+				chapter.set({
+					chapterNumber: data.chapterNumber,
+					chapterTitle: data.chapterTitle,
+					chapterContent: data.chapterContent,
+				});
+				await chapter.save();
+				return {
+					errCode: 0,
+					errMessage: 'Update chapter info succeed!',
+				};
+			} else {
+				return {
+					errCode: 1,
+					errMessage: 'Chapter not found',
+				};
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	addNewBookService,
 	updateBookInfoService,
 	deleteBookService,
+	addNewChapterService,
+	updateChapterInfoService
 };

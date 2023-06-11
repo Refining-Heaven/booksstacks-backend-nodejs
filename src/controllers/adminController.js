@@ -16,8 +16,20 @@ const handleDeleteBook = async (req, res) => {
   return res.status(200).json(message)
 }
 
+const handleAddNewChapter = async (req, res) => {
+  const message = await adminService.addNewChapterService(req.body)
+  return res.status(200).json(message)
+}
+
+const handleUpdateChapterInfo = async (req, res) => {
+  const message = await adminService.updateChapterInfoService(req.body)
+  return res.status(200).json(message)
+}
+
 module.exports = {
   handleAddNewBook,
   handleUpdateBookInfo,
-  handleDeleteBook
+  handleDeleteBook,
+  handleAddNewChapter,
+  handleUpdateChapterInfo
 }

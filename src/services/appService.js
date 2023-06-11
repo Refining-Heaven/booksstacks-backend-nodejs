@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import db from '../models';
-import book_genre from '../models/book_genre';
+import sequelize from 'sequelize';
 
 const getAllGenreService = async () => {
 	try {
@@ -86,6 +86,7 @@ const getAllCodeService = async (type) => {
 	}
 };
 
+// Book
 const getAllBookService = async () => {
 	try {
 		const allBook = await db.Book.findAll({
@@ -155,17 +156,7 @@ const getAllBookByNameService = async (name) => {
 				limit: 5,
 				order: [['bookName', 'ASC']],
 				attributes: {
-					exclude: [
-						'author',
-						'intro',
-						'uploaderId',
-						'status',
-						'kind',
-						'language',
-						'version',
-						'createdAt',
-						'updatedAt',
-					],
+					exclude: ['author', 'intro', 'uploaderId', 'status', 'kind', 'language', 'version', 'createdAt', 'updatedAt'],
 				},
 			});
 			return {
@@ -240,7 +231,7 @@ const getAllBookByGenreService = async (genreId) => {
 	}
 };
 
-const getBookInfoByIdService = async (bookId) => {
+const getBookInfoService = async (bookId) => {
 	try {
 		if (bookId) {
 			const bookInfo = await db.Book.findOne({
@@ -294,6 +285,72 @@ const getBookInfoByIdService = async (bookId) => {
 	}
 };
 
+// Chapter
+const getAllChapterService = async (bookId) => {
+	try {
+		if (bookId) {
+			const allChapter = await db.Chapter.findAll({
+				where: { bookId: bookId },
+				order: [['chapterNumber', 'ASC']],
+				attributes: {
+					exclude: ['chapterContent', 'createdAt', 'updatedAt'],
+					include: [
+						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%d/%m/%Y'), 'date'],
+						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time']
+					],
+				},
+			});
+			return {
+				errCode: 0,
+				data: allChapter,
+			};
+		} else {
+			return {
+				errCode: 1,
+				errMessage: 'Missing required parameters',
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+const getChapterInfoService = async (chapterId) => {
+	try {
+		if (chapterId) {
+			const chapterInfo = await db.Chapter.findOne({
+				where: { id: chapterId },
+				attributes: {
+					exclude: ['createdAt', 'updatedAt'],
+					include: [
+						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%d/%m/%Y'), 'date'],
+						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time']
+					],
+				},
+			});
+			return {
+				errCode: 0,
+				data: chapterInfo,
+			};
+		} else {
+			return {
+				errCode: 1,
+				errMessage: 'Missing required parameters',
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	getAllGenreService,
 	getAllKindService,
@@ -302,5 +359,7 @@ module.exports = {
 	getAllNewBookService,
 	getAllBookByNameService,
 	getAllBookByGenreService,
-	getBookInfoByIdService,
+	getBookInfoService,
+	getAllChapterService,
+	getChapterInfoService,
 };
