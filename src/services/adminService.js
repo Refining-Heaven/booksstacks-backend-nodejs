@@ -195,10 +195,45 @@ const updateChapterInfoService = async (data) => {
 	}
 };
 
+const deleteChapterService = async (chapterId) => {
+	try {
+		if (chapterId) {
+			const chapter = await db.Chapter.findOne({
+				where: { id: chapterId },
+				raw: false,
+			});
+			if (!chapter) {
+				return {
+					errCode: 1,
+					errMessage: `The chapter isn't exist`,
+				};
+			} else {
+				await chapter.destroy();
+				return {
+					errCode: 0,
+					errMessage: 'Chapter delete succeed!',
+				};
+			}
+		} else {
+			return {
+				errCode: 2,
+				errMessage: 'Missing required parameters',
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	addNewBookService,
 	updateBookInfoService,
 	deleteBookService,
 	addNewChapterService,
-	updateChapterInfoService
+	updateChapterInfoService,
+	deleteChapterService
 };

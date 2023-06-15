@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import db from '../models';
 import sequelize from 'sequelize';
 
+//
 const getAllGenreService = async () => {
 	try {
 		const response = await db.Genre.findAll({
@@ -296,7 +297,7 @@ const getAllChapterService = async (bookId) => {
 					exclude: ['chapterContent', 'createdAt', 'updatedAt'],
 					include: [
 						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%d/%m/%Y'), 'date'],
-						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time']
+						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time'],
 					],
 				},
 			});
@@ -328,7 +329,7 @@ const getChapterInfoService = async (chapterId) => {
 					exclude: ['createdAt', 'updatedAt'],
 					include: [
 						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%d/%m/%Y'), 'date'],
-						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time']
+						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time'],
 					],
 				},
 			});

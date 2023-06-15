@@ -1,5 +1,6 @@
 import appService from '../services/appService';
 
+//
 const handleGetAllGenre = async (req, res) => {
 	const message = await appService.getAllGenreService();
 	return res.status(200).json(message);
@@ -67,5 +68,5 @@ module.exports = {
 	handleGetAllBookByGenre,
 	handleGetBookInfo,
 	handleGetAllChapter,
-	handleGetChapterInfo
+	handleGetChapterInfo,
 };

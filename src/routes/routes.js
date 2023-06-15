@@ -8,12 +8,16 @@ const router = express.Router();
 const initWebRoutes = (app) => {
 	router.post('/api/sign-up', userController.handleUserSignUp);
 	router.post('/api/login', userController.handleUserLogin);
+	router.get('/api/get-account-info', userController.handleGetAccountInfo);
+	router.put('/api/update-account-info', userController.handleUpdateAccountInfo);
+	router.put('/api/change-password', userController.handleChangePassword);
 
 	router.post('/api/add-new-book', adminController.handleAddNewBook);
 	router.put('/api/update-book-info', adminController.handleUpdateBookInfo);
 	router.delete('/api/delete-book', adminController.handleDeleteBook);
 	router.post('/api/add-new-chapter', adminController.handleAddNewChapter);
 	router.put('/api/update-chapter-info', adminController.handleUpdateChapterInfo);
+	router.delete('/api/delete-chapter', adminController.handleDeleteChapter);
 
 	router.get('/api/get-all-genre', appController.handleGetAllGenre);
 	router.get('/api/get-all-kind', appController.handleGetAllKind);

@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.belongsTo(models.Allcode, {foreignKey: 'role', targetKey:'keyMap', as: 'roleData'}),
       User.hasMany(models.Book, {foreignKey: 'uploaderId', as: 'uploader'})
     }
   }
