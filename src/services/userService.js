@@ -187,7 +187,7 @@ const updateAccountInfoService = async (data) => {
 			} else {
 				return {
 					errCode: 1,
-					errMessage: 'account not found',
+					errMessage: 'Account not found',
 				};
 			}
 		}
@@ -204,7 +204,7 @@ const changePasswordService = async (data) => {
 	try {
 		if (!data.userId) {
 			return {
-				errCode: 4,
+				errCode: 5,
 				errMessage: 'Missing input Parameters!',
 			};
 		} else {
@@ -215,32 +215,39 @@ const changePasswordService = async (data) => {
 			if (account) {
 				const checkCurrentPassword = await bcrypt.compareSync(data.currentPassword, account.password);
 				if (checkCurrentPassword) {
-					if (data.newPassword === data.confirmNewPassword) {
-						const hashPasswordFromBycrypt = await hashPassword(data.newPassword);
-						account.set({
-							password: hashPasswordFromBycrypt
-						})
-						await account.save();
-						return {
-							errCode: 0,
-							errMessage: 'Change account password succeed!',
-						};
+					if (data.newPassword !== '' ){
+						if (data.newPassword === data.confirmNewPassword) {
+							const hashPasswordFromBycrypt = await hashPassword(data.newPassword);
+							account.set({
+								password: hashPasswordFromBycrypt
+							})
+							await account.save();
+							return {
+								errCode: 0,
+								errMessage: 'Change account password succeed!',
+							};
+						} else {
+							return {
+								errCode: 1,
+								errMessage: `Confirm new password doesn't match with new password!`,
+							};
+						}
 					} else {
 						return {
-							errCode: 1,
-							errMessage: `Confirm new password doesn't match with new password!`,
+							errCode: 2,
+							errMessage: 'Please enter new password!',
 						};
 					}
 				} else {
 					return {
-						errCode: 2,
+						errCode: 3,
 						errMessage: 'Current password is wrong!',
 					};
 				}
 			} else {
 				return {
-					errCode: 3,
-					errMessage: 'account not found',
+					errCode: 4,
+					errMessage: 'Account not found',
 				};
 			}
 		}
