@@ -77,7 +77,7 @@ const userLoginService = async (data) => {
 				const user = await db.User.findOne({
 					where: { email: data.email },
 					attributes: {
-						exclude: ['createdAt', 'updatedAt']
+						exclude: ['avatar', 'createdAt', 'updatedAt']
 					},
 					raw: true,
 				});
@@ -124,7 +124,7 @@ const getAccountInfoService = async (userId) => {
 			const userInfo = await db.User.findOne({
 				where: { id: userId },
 				attributes: {
-					exclude: ['password', 'banned', 'createdAt', 'updatedAt'],
+					exclude: ['password', 'createdAt', 'updatedAt'],
 				},
 				include: [{ model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] }],
 				raw: true,

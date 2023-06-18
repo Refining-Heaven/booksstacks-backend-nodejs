@@ -58,6 +58,12 @@ const handleGetChapterInfo = async (req, res) => {
 	return res.status(200).json(message);
 };
 
+// Account
+const handleGetAllAccount = async (req, res) => {
+	const message = await appService.getAllAccountService();
+	return res.status(200).json(message);
+};
+
 module.exports = {
 	handleGetAllGenre,
 	handleGetAllKind,
@@ -69,4 +75,5 @@ module.exports = {
 	handleGetBookInfo,
 	handleGetAllChapter,
 	handleGetChapterInfo,
+	handleGetAllAccount
 };

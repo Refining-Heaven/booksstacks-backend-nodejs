@@ -352,6 +352,31 @@ const getChapterInfoService = async (chapterId) => {
 	}
 };
 
+// Account
+const getAllAccountService = async () => {
+	try {
+		const allAccount = await db.User.findAll({
+			order: [['username', 'ASC']],
+			attributes: {
+				exclude: ['createdAt', 'updatedAt'],
+			},
+			include: [{ model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] }],
+			raw: true,
+			nest: true,
+		});
+		return {
+			errCode: 0,
+			data: allAccount,
+		};
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	getAllGenreService,
 	getAllKindService,
@@ -363,4 +388,5 @@ module.exports = {
 	getBookInfoService,
 	getAllChapterService,
 	getChapterInfoService,
+	getAllAccountService
 };

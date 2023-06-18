@@ -32,11 +32,30 @@ const handleDeleteChapter = async (req, res) => {
   return res.status(200).json(message)
 }
 
+const handleChangeAccountInfo = async (req, res) => {
+  const message = await adminService.changeAccountInfoService(req.body)
+  return res.status(200).json(message)
+}
+
+const handleResetAccountPassword = async (req, res) => {
+  const message = await adminService.resetAccountPasswordService(req.body)
+  return res.status(200).json(message)
+}
+
+const handleDeleteAccount = async (req, res) => {
+  const userId = req.body.id
+  const message = await adminService.deleteAccountService(userId)
+  return res.status(200).json(message)
+}
+
 module.exports = {
   handleAddNewBook,
   handleUpdateBookInfo,
   handleDeleteBook,
   handleAddNewChapter,
   handleUpdateChapterInfo,
-  handleDeleteChapter
+  handleDeleteChapter,
+  handleChangeAccountInfo,
+  handleResetAccountPassword,
+  handleDeleteAccount
 }

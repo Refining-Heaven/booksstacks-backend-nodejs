@@ -1,4 +1,16 @@
 import db from '../models';
+import bcrypt from 'bcryptjs';
+
+const salt = bcrypt.genSaltSync(10);
+
+const hashPassword = async (password) => {
+	try {
+		const hashPassword = await bcrypt.hashSync(password, salt);
+		return hashPassword;
+	} catch (e) {
+		console.log(e);
+	}
+};
 
 const addNewBookService = async (data) => {
 	try {
@@ -229,11 +241,126 @@ const deleteChapterService = async (chapterId) => {
 	}
 };
 
+const changeAccountInfoService = async (data) => {
+	try {
+		if (!data.userId) {
+			return {
+				errCode: 1,
+				errMessage: 'Missing input Parameters!',
+			};
+		} else {
+			let account = await db.User.findOne({
+				where: { id: data.userId },
+				raw: false,
+			});
+			if (account) {
+				account.set({
+					email: data.email,
+					username: data.username,
+					role: data.role,
+					banned: data.banned
+				});
+				await account.save();
+				return {
+					errCode: 0,
+					errMessage: 'Change account info succeed!',
+				};
+			} else {
+				return {
+					errCode: 1,
+					errMessage: 'Account not found',
+				};
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+const resetAccountPasswordService = async (data) => {
+	try {
+		if (!data.userId) {
+			return {
+				errCode: 1,
+				errMessage: 'Missing input Parameters!',
+			};
+		} else {
+			let account = await db.User.findOne({
+				where: { id: data.userId },
+				raw: false,
+			});
+			if (account) {
+				const hashPasswordFromBycrypt = await hashPassword(data.resetPassword);
+				account.set({
+					password: hashPasswordFromBycrypt
+				});
+				await account.save();
+				return {
+					errCode: 0,
+					errMessage: 'Reset password succeed!',
+				};
+			} else {
+				return {
+					errCode: 1,
+					errMessage: 'Account not found',
+				};
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+const deleteAccountService = async (userId) => {
+	try {
+		if (userId) {
+			const account = await db.User.findOne({
+				where: { id: userId },
+				raw: false,
+			});
+			if (!account) {
+				return {
+					errCode: 1,
+					errMessage: `Account isn't exist`,
+				};
+			} else {
+				await account.destroy();
+				return {
+					errCode: 0,
+					errMessage: 'Account delete succeed!',
+				};
+			}
+		} else {
+			return {
+				errCode: 2,
+				errMessage: 'Missing required parameters',
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	addNewBookService,
 	updateBookInfoService,
 	deleteBookService,
 	addNewChapterService,
 	updateChapterInfoService,
-	deleteChapterService
+	deleteChapterService,
+	changeAccountInfoService,
+	resetAccountPasswordService,
+	deleteAccountService
 };

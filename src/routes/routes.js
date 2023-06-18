@@ -18,6 +18,9 @@ const initWebRoutes = (app) => {
 	router.post('/api/add-new-chapter', adminController.handleAddNewChapter);
 	router.put('/api/update-chapter-info', adminController.handleUpdateChapterInfo);
 	router.delete('/api/delete-chapter', adminController.handleDeleteChapter);
+	router.put('/api/change-account-info', adminController.handleChangeAccountInfo);
+	router.put('/api/reset-account-password', adminController.handleResetAccountPassword);
+	router.delete('/api/delete-account', adminController.handleDeleteAccount);
 
 	router.get('/api/get-all-genre', appController.handleGetAllGenre);
 	router.get('/api/get-all-kind', appController.handleGetAllKind);
@@ -29,6 +32,7 @@ const initWebRoutes = (app) => {
 	router.get('/api/get-book-info', appController.handleGetBookInfo);
 	router.get('/api/get-all-chapter', appController.handleGetAllChapter);
 	router.get('/api/get-chapter-info', appController.handleGetChapterInfo);
+	router.get('/api/get-all-account', appController.handleGetAllAccount);
 
 	return app.use('/', router);
 };
