@@ -77,7 +77,7 @@ const userLoginService = async (data) => {
 				const user = await db.User.findOne({
 					where: { email: data.email },
 					attributes: {
-						exclude: ['avatar', 'createdAt', 'updatedAt']
+						exclude: ['avatar', 'createdAt', 'updatedAt'],
 					},
 					raw: true,
 				});
@@ -215,12 +215,12 @@ const changePasswordService = async (data) => {
 			if (account) {
 				const checkCurrentPassword = await bcrypt.compareSync(data.currentPassword, account.password);
 				if (checkCurrentPassword) {
-					if (data.newPassword !== '' ){
+					if (data.newPassword !== '') {
 						if (data.newPassword === data.confirmNewPassword) {
 							const hashPasswordFromBycrypt = await hashPassword(data.newPassword);
 							account.set({
-								password: hashPasswordFromBycrypt
-							})
+								password: hashPasswordFromBycrypt,
+							});
 							await account.save();
 							return {
 								errCode: 0,
@@ -260,10 +260,146 @@ const changePasswordService = async (data) => {
 	}
 };
 
+const addCommentService = async (data) => {
+	try {
+		if (!data.userId) {
+			return {
+				errCode: 1,
+				errMessage: 'You must login to comment!',
+			};
+		} else {
+			if (!data.type) {
+				return {
+					errCode: 2,
+					errMessage: 'Missing required parameters',
+				};
+			} else {
+				if (data.content === '') {
+					return {
+						errCode: 3,
+						errMessage: 'Please enter comment!',
+					};
+				} else {
+					if (data.type === 'BOOK') {
+						await db.Comment.create({
+							content: data.content,
+							userId: data.userId,
+							bookId: data.bookId,
+						});
+					}
+					if (data.type === 'CHAPTER') {
+						await db.Comment.create({
+							content: data.content,
+							userId: data.userId,
+							bookId: data.bookId,
+							chapterId: data.chapterId,
+						});
+					}
+					return {
+						errCode: 0,
+						errMessage: 'Ok',
+					};
+				}
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+const addReplyService = async (data) => {
+	try {
+		if (!data.userId) {
+			return {
+				errCode: 1,
+				errMessage: 'You must login to reply!',
+			};
+		} else {
+			if (!data.commentId) {
+				return {
+					errCode: 2,
+					errMessage: 'Missing required parameters',
+				};
+			} else {
+				if (data.content === '') {
+					return {
+						errCode: 3,
+						errMessage: 'Please enter reply!',
+					};
+				} else {
+					await db.Reply.create({
+						content: data.content,
+						userId: data.userId,
+						commentId: data.commentId,
+					});
+					return {
+						errCode: 0,
+						errMessage: 'Ok',
+					};
+				}
+			}
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+const deleteCommentService = async (id, type) => {
+	try {
+		if (!id || !type) {
+			return {
+				errCode: 2,
+				errMessage: 'Missing required parameters',
+			};
+		} else {
+			if (type === 'COMMENT') {
+				const comment = await db.Comment.findOne({
+					where: { id: id },
+					raw: false
+				});
+				await db.Reply.destroy({where: { commentId: id }});
+				await comment.destroy();
+				return {
+					errCode: 0,
+					data: 'Ok',
+				};
+			}
+		}
+		if (type === 'REPLY') {
+			const reply = await db.Reply.findOne({
+				where: { id: id },
+				raw: false
+			});
+			await reply.destroy();
+			return {
+				errCode: 0,
+				data: 'Ok',
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	userSignUpService,
 	userLoginService,
 	getAccountInfoService,
 	updateAccountInfoService,
 	changePasswordService,
+	addCommentService,
+	addReplyService,
+	deleteCommentService,
 };

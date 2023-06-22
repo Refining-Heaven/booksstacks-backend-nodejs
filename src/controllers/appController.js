@@ -64,6 +64,21 @@ const handleGetAllAccount = async (req, res) => {
 	return res.status(200).json(message);
 };
 
+// Comment
+const handleGetAllComment = async (req, res) => {
+	const id = req.query.id;
+	const type = req.query.type;
+	const message = await appService.getAllCommentService(id, type);
+	return res.status(200).json(message);
+};
+
+// Reply
+const handleGetAllReply = async (req, res) => {
+	const commentId = req.query.id;
+	const message = await appService.getAllReplyService(commentId);
+	return res.status(200).json(message);
+};
+
 module.exports = {
 	handleGetAllGenre,
 	handleGetAllKind,
@@ -75,5 +90,7 @@ module.exports = {
 	handleGetBookInfo,
 	handleGetAllChapter,
 	handleGetChapterInfo,
-	handleGetAllAccount
+	handleGetAllAccount,
+	handleGetAllComment,
+	handleGetAllReply
 };

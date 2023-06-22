@@ -292,13 +292,9 @@ const getAllChapterService = async (bookId) => {
 		if (bookId) {
 			const allChapter = await db.Chapter.findAll({
 				where: { bookId: bookId },
-				order: [['chapterNumber', 'ASC']],
+				order: [['chapterNumber', 'DESC']],
 				attributes: {
-					exclude: ['chapterContent', 'createdAt', 'updatedAt'],
-					include: [
-						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%d/%m/%Y'), 'date'],
-						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time'],
-					],
+					exclude: ['chapterContent', 'createdAt'],
 				},
 			});
 			return {
@@ -326,11 +322,7 @@ const getChapterInfoService = async (chapterId) => {
 			const chapterInfo = await db.Chapter.findOne({
 				where: { id: chapterId },
 				attributes: {
-					exclude: ['createdAt', 'updatedAt'],
-					include: [
-						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%d/%m/%Y'), 'date'],
-						[sequelize.fn('DATE_FORMAT', sequelize.col('updatedAt'), '%H:%i:%s'), 'time'],
-					],
+					exclude: ['createdAt'],
 				},
 			});
 			return {
@@ -377,6 +369,111 @@ const getAllAccountService = async () => {
 	}
 };
 
+// Comment
+const getAllCommentService = async (id, type) => {
+	try {
+		if (!id || !type) {
+			return {
+				errCode: 2,
+				errMessage: 'Missing required parameters',
+			};
+		} else {
+			if (type === 'BOOK') {
+				const allComment = await db.Comment.findAll({
+					where: { bookId: id },
+					order: [['createdAt', 'DESC']],
+					attributes: {
+						exclude: ['updatedAt'],
+					},
+					include: [
+						{
+							model: db.User,
+							as: 'userCommentData',
+							attributes: ['id', 'username', 'avatar'],
+							include: [{ model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] }],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+				return {
+					errCode: 0,
+					data: allComment,
+				};
+			}
+		}
+		if (type === 'CHAPTER') {
+			const allComment = await db.Comment.findAll({
+				where: { chapterId: id },
+				order: [['createdAt', 'DESC']],
+				attributes: {
+					exclude: ['updatedAt'],
+				},
+				include: [
+					{
+						model: db.User,
+						as: 'userCommentData',
+						attributes: ['id', 'username', 'avatar'],
+						include: [{ model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] }],
+					},
+				],
+				raw: true,
+				nest: true,
+			});
+			return {
+				errCode: 0,
+				data: allComment,
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
+// Reply
+const getAllReplyService = async (id, type) => {
+	try {
+		if (!id) {
+			return {
+				errCode: 2,
+				errMessage: 'Missing required parameters',
+			};
+		} else {
+			const allReply = await db.Reply.findAll({
+				where: { commentId: id },
+				order: [['createdAt', 'DESC']],
+				attributes: {
+					exclude: ['updatedAt'],
+				},
+				include: [
+					{
+						model: db.User,
+						as: 'userReplyData',
+						attributes: ['id', 'username', 'avatar'],
+						include: [{ model: db.Allcode, as: 'roleData', attributes: ['valueEn', 'valueVi'] }],
+					},
+				],
+				raw: true,
+				nest: true,
+			});
+			return {
+				errCode: 0,
+				data: allReply,
+			};
+		}
+	} catch (e) {
+		console.log(e);
+		return {
+			errCode: -1,
+			errMessage: 'Error from server',
+		};
+	}
+};
+
 module.exports = {
 	getAllGenreService,
 	getAllKindService,
@@ -388,5 +485,7 @@ module.exports = {
 	getBookInfoService,
 	getAllChapterService,
 	getChapterInfoService,
-	getAllAccountService
+	getAllAccountService,
+	getAllCommentService,
+	getAllReplyService,
 };

@@ -11,6 +11,9 @@ const initWebRoutes = (app) => {
 	router.get('/api/get-account-info', userController.handleGetAccountInfo);
 	router.put('/api/update-account-info', userController.handleUpdateAccountInfo);
 	router.put('/api/change-password', userController.handleChangePassword);
+	router.post('/api/add-comment', userController.handleAddComment);
+	router.post('/api/add-reply', userController.handleAddReply);
+	router.delete('/api/delete-comment', userController.handleDeleteComment);
 
 	router.post('/api/add-new-book', adminController.handleAddNewBook);
 	router.put('/api/update-book-info', adminController.handleUpdateBookInfo);
@@ -33,6 +36,8 @@ const initWebRoutes = (app) => {
 	router.get('/api/get-all-chapter', appController.handleGetAllChapter);
 	router.get('/api/get-chapter-info', appController.handleGetChapterInfo);
 	router.get('/api/get-all-account', appController.handleGetAllAccount);
+	router.get('/api/get-all-comment', appController.handleGetAllComment);
+	router.get('/api/get-all-reply', appController.handleGetAllReply);
 
 	return app.use('/', router);
 };
