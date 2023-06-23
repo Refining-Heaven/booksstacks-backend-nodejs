@@ -112,6 +112,13 @@ const deleteBookService = async (bookId) => {
 					errMessage: `The book isn't exist`,
 				};
 			} else {
+				const bookGenre = await db.Book_Genre.findAll({
+					where: { bookId: bookId },
+					raw: false,
+				});
+				if (bookGenre) {
+					await db.Book_Genre.destroy({where: { bookId: bookId }});
+				}
 				await book.destroy();
 				return {
 					errCode: 0,
@@ -258,7 +265,7 @@ const changeAccountInfoService = async (data) => {
 					email: data.email,
 					username: data.username,
 					role: data.role,
-					banned: data.banned
+					banned: data.banned,
 				});
 				await account.save();
 				return {
@@ -296,7 +303,7 @@ const resetAccountPasswordService = async (data) => {
 			if (account) {
 				const hashPasswordFromBycrypt = await hashPassword(data.resetPassword);
 				account.set({
-					password: hashPasswordFromBycrypt
+					password: hashPasswordFromBycrypt,
 				});
 				await account.save();
 				return {
@@ -362,5 +369,5 @@ module.exports = {
 	deleteChapterService,
 	changeAccountInfoService,
 	resetAccountPasswordService,
-	deleteAccountService
+	deleteAccountService,
 };

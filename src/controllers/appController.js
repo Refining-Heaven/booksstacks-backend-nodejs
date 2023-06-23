@@ -39,6 +39,13 @@ const handleGetAllBookByGenre = async (req, res) => {
 	return res.status(200).json(message);
 };
 
+const handleGetAllBookByKind = async (req, res) => {
+	const kindId = req.query.id;
+	const limit = req.query.limit
+	const message = await appService.getAllBookByKindService(kindId, limit);
+	return res.status(200).json(message);
+};
+
 const handleGetBookInfo = async (req, res) => {
 	const bookId = req.query.id;
 	const message = await appService.getBookInfoService(bookId);
@@ -87,6 +94,7 @@ module.exports = {
 	handleGetAllNewBook,
 	handleGetAllBookByName,
 	handleGetAllBookByGenre,
+	handleGetAllBookByKind,
 	handleGetBookInfo,
 	handleGetAllChapter,
 	handleGetChapterInfo,

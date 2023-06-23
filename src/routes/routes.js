@@ -32,6 +32,7 @@ const initWebRoutes = (app) => {
 	router.get('/api/get-all-new-book', appController.handleGetAllNewBook);
 	router.get('/api/get-all-book-by-name', appController.handleGetAllBookByName);
 	router.get('/api/get-all-book-by-genre', appController.handleGetAllBookByGenre);
+	router.get('/api/get-all-book-by-kind', appController.handleGetAllBookByKind);
 	router.get('/api/get-book-info', appController.handleGetBookInfo);
 	router.get('/api/get-all-chapter', appController.handleGetAllChapter);
 	router.get('/api/get-chapter-info', appController.handleGetChapterInfo);
