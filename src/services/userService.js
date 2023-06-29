@@ -68,7 +68,7 @@ const userLoginService = async (data) => {
 	try {
 		if (!data.email || !data.password) {
 			return {
-				errCode: 4,
+				errCode: 5,
 				errMessage: 'Missing inputs parameters!',
 			};
 		} else {
@@ -82,29 +82,36 @@ const userLoginService = async (data) => {
 					raw: true,
 				});
 				if (user) {
-					const check = await bcrypt.compareSync(data.password, user.password);
-					if (check) {
-						delete user.password;
+					if (!!user.banned === true) {
 						return {
-							errCode: 0,
-							errMessage: 'Login succeed!',
-							data: user,
+							errCode: 2,
+							errMessage: 'This account has been banned!',
 						};
 					} else {
-						return {
-							errCode: 1,
-							errMessage: 'Wrong password!',
-						};
+						const check = await bcrypt.compareSync(data.password, user.password);
+						if (check) {
+							delete user.password;
+							return {
+								errCode: 0,
+								errMessage: 'Login succeed!',
+								data: user,
+							};
+						} else {
+							return {
+								errCode: 1,
+								errMessage: 'Wrong password!',
+							};
+						}
 					}
 				} else {
 					return {
-						errCode: 2,
+						errCode: 3,
 						errMessage: 'User not found!',
 					};
 				}
 			} else {
 				return {
-					errCode: 3,
+					errCode: 4,
 					errMessage: `Your Email isn't exist in our system!`,
 				};
 			}
