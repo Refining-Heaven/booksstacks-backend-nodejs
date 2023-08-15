@@ -56,7 +56,6 @@ const updateBookInfoService = async (data) => {
 					anotherName: data.anotherName,
 					author: data.author,
 					status: data.status,
-					kind: data.kind,
 					version: data.version,
 					language: data.language,
 					intro: data.intro,

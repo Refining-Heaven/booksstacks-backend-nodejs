@@ -6,11 +6,6 @@ const handleGetAllGenre = async (req, res) => {
 	return res.status(200).json(message);
 };
 
-const handleGetAllKind = async (req, res) => {
-	const message = await appService.getAllKindService();
-	return res.status(200).json(message);
-};
-
 const handleGetAllCode = async (req, res) => {
 	const message = await appService.getAllCodeService(req.query.type);
 	return res.status(200).json(message);
@@ -23,7 +18,8 @@ const handleGetAllBook = async (req, res) => {
 };
 
 const handleGetAllNewBook = async (req, res) => {
-	const message = await appService.getAllNewBookService();
+	const limit = req.query.limit
+	const message = await appService.getAllNewBookService(limit);
 	return res.status(200).json(message);
 };
 
@@ -35,14 +31,8 @@ const handleGetAllBookByName = async (req, res) => {
 
 const handleGetAllBookByGenre = async (req, res) => {
 	const genreId = req.query.id;
-	const message = await appService.getAllBookByGenreService(genreId);
-	return res.status(200).json(message);
-};
-
-const handleGetAllBookByKind = async (req, res) => {
-	const kindId = req.query.id;
-	const limit = req.query.limit
-	const message = await appService.getAllBookByKindService(kindId, limit);
+	const limit = req.query.limit;
+	const message = await appService.getAllBookByGenreService(genreId, limit);
 	return res.status(200).json(message);
 };
 
@@ -88,13 +78,11 @@ const handleGetAllReply = async (req, res) => {
 
 module.exports = {
 	handleGetAllGenre,
-	handleGetAllKind,
 	handleGetAllCode,
 	handleGetAllBook,
 	handleGetAllNewBook,
 	handleGetAllBookByName,
 	handleGetAllBookByGenre,
-	handleGetAllBookByKind,
 	handleGetBookInfo,
 	handleGetAllChapter,
 	handleGetChapterInfo,

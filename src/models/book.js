@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       Book.belongsTo(models.Kind, {foreignKey: 'kind', targetKey:'id', as: 'kindData'})
       Book.belongsTo(models.User, {foreignKey: 'uploaderId', targetKey:'id', as: 'uploader'})
       Book.hasMany(models.Book_Genre, {foreignKey: 'bookId', as: 'bookData'})
+      Book.hasMany(models.Chapter, {foreignKey: 'bookId', as: 'chapterBookData'})
     }
   }
   Book.init({

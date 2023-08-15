@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Chapter.belongsTo(models.Book, {foreignKey: 'bookId', targetKey:'id', as: 'chapterBookData'})
     }
   }
   Chapter.init({

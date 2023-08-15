@@ -31,34 +31,6 @@ const getAllGenreService = async () => {
 	}
 };
 
-const getAllKindService = async () => {
-	try {
-		const response = await db.Kind.findAll({
-			attributes: {
-				exclude: ['createdAt', 'updatedAt'],
-			},
-		});
-		if (!response) {
-			return {
-				errCode: 1,
-				errMessage: 'Cannot get genre',
-			};
-		} else {
-			return {
-				errCode: 0,
-				errMessage: 'Ok',
-				data: response,
-			};
-		}
-	} catch (e) {
-		console.log(e);
-		return {
-			errCode: -1,
-			errMessage: 'Error from server',
-		};
-	}
-};
-
 const getAllCodeService = async (type) => {
 	try {
 		if (!type) {
@@ -99,7 +71,6 @@ const getAllBookService = async () => {
 				{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
 				{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
 				{ model: db.Allcode, as: 'languageData', attributes: ['valueEn', 'valueVi'] },
-				{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
 			],
 			raw: true,
 			nest: true,
@@ -117,26 +88,33 @@ const getAllBookService = async () => {
 	}
 };
 
-const getAllNewBookService = async () => {
+const getAllNewBookService = async (limit) => {
 	try {
-		const allBook = await db.Book.findAll({
+		const newChapters = await db.Chapter.findAll({
 			order: [['updatedAt', 'DESC']],
-			limit: 6,
+			group: 'bookId',
+			limit: +limit,
 			attributes: {
-				exclude: ['intro', 'createdAt'],
+				exclude: ['chapterContent', 'createdAt'],
 			},
 			include: [
-				{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
-				{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
-				{ model: db.Allcode, as: 'languageData', attributes: ['valueEn', 'valueVi'] },
-				{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
+				{
+					model: db.Book,
+					as: 'chapterBookData',
+					attributes: ['id', 'bookName', 'anotherName', 'author', 'status', 'version', 'language', 'coverImage'],
+					include: [
+						{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
+						{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
+						{ model: db.Allcode, as: 'languageData', attributes: ['valueEn', 'valueVi'] },
+					],
+				},
 			],
 			raw: true,
 			nest: true,
 		});
 		return {
 			errCode: 0,
-			data: allBook,
+			data: newChapters,
 		};
 	} catch (e) {
 		console.log(e);
@@ -157,7 +135,7 @@ const getAllBookByNameService = async (name) => {
 				limit: 5,
 				order: [['bookName', 'ASC']],
 				attributes: {
-					exclude: ['author', 'intro', 'uploaderId', 'status', 'kind', 'language', 'version', 'createdAt', 'updatedAt'],
+					exclude: ['author', 'intro', 'uploaderId', 'status', 'language', 'version', 'createdAt', 'updatedAt'],
 				},
 			});
 			return {
@@ -179,12 +157,13 @@ const getAllBookByNameService = async (name) => {
 	}
 };
 
-const getAllBookByGenreService = async (genreId) => {
+const getAllBookByGenreService = async (genreId, limit) => {
 	try {
 		if (genreId) {
 			const allBook = await db.Book_Genre.findAll({
 				where: { genreId: genreId },
 				order: [['updatedAt', 'DESC']],
+				limit: +limit,
 				attributes: {
 					exclude: ['id', 'createdAt'],
 				},
@@ -197,7 +176,6 @@ const getAllBookByGenreService = async (genreId) => {
 							{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
 							{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
 							{ model: db.Allcode, as: 'languageData', attributes: ['valueEn', 'valueVi'] },
-							{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
 						],
 					},
 				],
@@ -232,44 +210,6 @@ const getAllBookByGenreService = async (genreId) => {
 	}
 };
 
-const getAllBookByKindService = async (kindId, limit) => {
-	try {
-		if (kindId) {
-			const allBook = await db.Book.findAll({
-				where: { kind: kindId },
-				order: [['updatedAt', 'DESC']],
-				limit: +limit,
-				attributes: {
-					exclude: ['createdAt'],
-				},
-				include: [
-					{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
-					{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
-					{ model: db.Allcode, as: 'languageData', attributes: ['valueEn', 'valueVi'] },
-					{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
-				],
-				raw: true,
-				nest: true,
-			});
-			return {
-				errCode: 0,
-				data: allBook,
-			};
-		} else {
-			return {
-				errCode: 2,
-				errMessage: 'Missing required parameters',
-			};
-		}
-	} catch (e) {
-		console.log(e);
-		return {
-			errCode: -1,
-			errMessage: 'Error from server',
-		};
-	}
-};
-
 const getBookInfoService = async (bookId) => {
 	try {
 		if (bookId) {
@@ -282,7 +222,6 @@ const getBookInfoService = async (bookId) => {
 					{ model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
 					{ model: db.Allcode, as: 'versionData', attributes: ['valueEn', 'valueVi'] },
 					{ model: db.Allcode, as: 'languageData', attributes: ['valueEn', 'valueVi'] },
-					{ model: db.Kind, as: 'kindData', attributes: ['valueEn', 'valueVi'] },
 					{ model: db.User, as: 'uploader', attributes: ['username'] },
 				],
 				raw: true,
@@ -514,13 +453,11 @@ const getAllReplyService = async (id, type) => {
 
 module.exports = {
 	getAllGenreService,
-	getAllKindService,
 	getAllCodeService,
 	getAllBookService,
 	getAllNewBookService,
 	getAllBookByNameService,
 	getAllBookByGenreService,
-	getAllBookByKindService,
 	getBookInfoService,
 	getAllChapterService,
 	getChapterInfoService,
