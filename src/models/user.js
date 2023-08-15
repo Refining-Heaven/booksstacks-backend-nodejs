@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     avatar: DataTypes.BLOB('long'),
     role: DataTypes.STRING,
-    banned: DataTypes.BOOLEAN,
+    banned: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'User',
