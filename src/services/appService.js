@@ -92,10 +92,9 @@ const getAllNewBookService = async (limit) => {
 	try {
 		const newChapters = await db.Chapter.findAll({
 			order: [['updatedAt', 'DESC']],
-			group: db.Chapter.bookId,
 			limit: +limit,
 			attributes: {
-				exclude: ['chapterContent', 'createdAt'],
+				exclude: ['chapterNumber', 'chapterTitle', 'chapterContent', 'createdAt'],
 			},
 			include: [
 				{
